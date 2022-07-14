@@ -1,0 +1,40 @@
+%{
+#include<stdio.h>
+#include<stdlib.h>
+#include "y.tab.h"
+extern int yylval;
+%}
+%%
+[0-9]+ {yylval=atoi(yytext);return NUM;}
+\t {;}
+\n {return 0;}
+. {return yytext[0];}
+%%
+In a separate file named compute.y
+%{ #include<stdio.h>
+int yylex();
+int yyerror(); %}
+%token NUM
+%left '+' '-' %left '*' '/'
+%%
+str:e {printf("Result: %d\n",$1); return 0;}
+;
+e:e'+'e {$$=$1+$3;}
+|e'-'e {$$=$1-$3;}
+|e'*'e {$$=$1*$3;}
+|e'/'e {$$=$1/$3;}
+|'('e')' {$$=$2;}
+|NUM
+;
+%%
+void main()
+{
+printf("Enter string");
+yyparse();
+printf("Valid Expression");
+}
+int yyerror()
+{
+printf("Invalid expression");
+return 0;
+}

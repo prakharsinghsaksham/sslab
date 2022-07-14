@@ -1,0 +1,43 @@
+%{
+#include<stdio.h>
+#include"y.tab.h"
+%}
+%%
+a {return A;}
+b {return B;}
+\n {return yytext[0];}
+. {return yytext[0];}
+%%
+yacc program
+%{
+#include<stdio.h>
+int yyerror();
+int yylex();
+%}
+%token A B
+%%
+str:s'\n' {printf("Valid Expression");}
+;
+s:x B
+;
+x:x A | A
+;
+%%
+int yywrap()
+{
+return 0;
+}
+int main()
+{
+printf("Enter input string\n");
+if(!yyparse())
+{
+printf("Valid String");
+return 0;
+}
+}
+int yyerror()
+{
+printf("Invalid input string");
+return 0;
+}

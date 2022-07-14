@@ -1,0 +1,32 @@
+%{
+#include<stdio.h>
+int a[]={0,0,0,0},opnd=0,valid=1,i=0;
+void ext();
+%}
+%x oper
+%%
+[a-zA-Z0-9]+ {opnd++;BEGIN oper;}
+<oper>"+" {if(valid){valid=0;i=0;} else ext();}
+<oper>"-" {if(valid){valid=0;i=1;} else ext();}
+<oper>"*" {if(valid){valid=0;i=2;} else ext();}
+<oper>"/" {if(valid){valid=0;i=3;} else ext();}
+<oper>[0-9a-zA-Z]+ {opnd++; if(valid==0){valid=1;a[i]++;}}
+<oper>"\n" {if(valid==0)ext(); else return 0;}
+.|\n {ext();}
+%%
+void ext()
+{
+printf("Invalid expression");
+exit(0);
+}
+int yywrap(void){return 0;}
+int main()
+{
+printf("Input expression");
+yylex();
+printf("No of identifiers are %d\n",opnd);
+printf("No of operators + are %d\n",a[0]);
+printf("No of operators - are %d\n",a[1]);
+printf("No of operators * are %d\n",a[2]);
+printf("No of operators / are %d\n",a[3]);
+}
